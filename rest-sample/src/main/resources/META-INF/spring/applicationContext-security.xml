@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security" 
+    xmlns:beans="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+    <!-- HTTP security configurations -->
+    <!--<http use-expressions="true" entry-point-ref="basicEntryPoint" create-session="stateless">-->
+    <http use-expressions="true" entry-point-ref="digestEntryPoint" create-session="stateless">
+        <!--<form-login login-processing-url="/j_spring_security_check" login-page="/login" authentication-failure-url="/login?login_error=t" />-->
+        <!--<logout logout-url="/j_spring_security_logout" />-->
+        <intercept-url pattern="/login"/>
+        <intercept-url pattern="/backend/**" access="isAuthenticated()" />
+        <intercept-url pattern="/todoes/**" access="isAuthenticated()" />
+        <intercept-url pattern="/resources/**" access="permitAll" />
+        <intercept-url pattern="/**" access="permitAll" />
+        <!--<custom-filter ref="basicFilter"  position="BASIC_AUTH_FILTER"/>-->
+        <custom-filter ref="digestFilter" after="BASIC_AUTH_FILTER"/>
+        <remember-me key="mySecondSecretWordThatShouldBeHidden" user-service-ref="userAccountDetailsService" />
+    </http>
+
+    <global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
+
+    <!-- Configure Authentication mechanism -->
+    <beans:bean name="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>
+
+    <!--<beans:bean id="basicEntryPoint"-->
+                <!--class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">-->
+        <!--<beans:property name="realmName" value="Spring Security Basic Realm"/>-->
+    <!--</beans:bean>-->
+
+    <!--<beans:bean id="basicFilter"-->
+                <!--class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">-->
+        <!--<beans:constructor-arg ref="authenticationManager"/>-->
+        <!--<beans:constructor-arg ref="basicEntryPoint"/>-->
+    <!--</beans:bean>-->
+
+    <beans:bean id="digestEntryPoint"
+                class="spring.security.starter.web.security.SinglePageAppAuthenticationEntryPoint">
+        <beans:property name="realmName" value="Spring Security Digest Realm"/>
+        <beans:property name="key" value="springSecurityNonce"/>
+        <beans:property name="nonceValiditySeconds" value="120"/>
+    </beans:bean>
+
+    <beans:bean id="digestFilter"
+                class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+        <beans:property name="userDetailsService" ref="userAccountDetailsService"/>
+        <beans:property name="authenticationEntryPoint" ref="digestEntryPoint"/>
+    </beans:bean>
+
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider user-service-ref="userAccountDetailsService">
+            <password-encoder ref="passwordEncoder"/>
+        </authentication-provider>
+    </authentication-manager>
+
+</beans:beans>

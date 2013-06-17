@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_spring_security_starter_model_Todo" items="${todoes}" z="itOVw+zu3K6yzp5pQLWSozJXFuU=">
+        <table:table data="${todoes}" id="l_spring_security_starter_model_Todo" path="/todoes" z="32ahJBuv8WHMYi2ry5lp9v5BcTg=">
+            <table:column id="c_spring_security_starter_model_Todo_title" property="title" z="DaecCXmozId7WlmEdNpjki6epN8="/>
+            <table:column id="c_spring_security_starter_model_Todo_completed" property="completed" z="z1TPQgW42eE+72icmtIgM1fUqM4="/>
+            <table:column id="c_spring_security_starter_model_Todo_assignee" property="assignee" z="vqwmaFE6tZRBmPFCxNElXXVYdis="/>
+        </table:table>
+    </page:list>
+</div>
